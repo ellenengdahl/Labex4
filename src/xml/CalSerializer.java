@@ -16,7 +16,7 @@ import javax.xml.bind.JAXBException;
  *
  */
 public class CalSerializer {
-	private final String SAVING_PATH = "cal-xml.xml";
+	private final String SAVING_PATH = "task-manager-xml.xml";
 
 	public Cal deserialize() throws JAXBException, FileNotFoundException {
 		Cal cal = null;
@@ -40,7 +40,6 @@ public class CalSerializer {
 		
 		return cal;
 	}
-	
 	
 	public String serialize(Cal cal) throws JAXBException, IOException {
 		String returningString = "";

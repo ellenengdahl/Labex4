@@ -11,6 +11,17 @@ import xml.Task;
 
 import javax.xml.bind.JAXBException;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.jgroups.JChannel;
+import org.jgroups.Message;
+import org.jgroups.ReceiverAdapter;
+import org.jgroups.View;
+import org.jgroups.util.Util;
+
 /**
  * A server to handle requests from several clients regarding the Taskmanager-assignment
  * 
@@ -20,7 +31,7 @@ import javax.xml.bind.JAXBException;
  * @version 1.0 beta
  *
  */
-public class TaskManagerTCPServer {
+public class TaskManagerTCPServer extends ReceiverAdapter {
 	//The predefined port to accept incoming requests
 	int serverPort = 7890;
 
@@ -120,7 +131,7 @@ public class TaskManagerTCPServer {
                 // Data in bytestream
                 Object data = obj2;
 
-                // handle protocls differently
+                // handle protocols differently
                 if(protocol.equalsIgnoreCase("GET")){
             	    // In this case the data is a userid
                     // @todo check this data
@@ -198,6 +209,9 @@ public class TaskManagerTCPServer {
      * @return Success message (confidence wins)
      */
 	private String post(Task task){
+		
+		//share it round
+		
         System.out.println("Posting "+task);
         System.out.println(cal);
         System.out.println(cal.tasks);
@@ -274,4 +288,9 @@ public class TaskManagerTCPServer {
     public static void main(String[] args) throws IOException{
         TaskManagerTCPServer server = new TaskManagerTCPServer();
     }
+    
+    public void receive(){
+    
+    }
+    
 }

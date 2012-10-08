@@ -14,8 +14,8 @@ import org.jgroups.Message;
 import org.jgroups.ReceiverAdapter;
 
 /**
- * This class is a combined server and client and JGroup rolled into one
- * @author Ellen
+ * This class is a combined server and JGroup rolled into one. The test client is in the main method
+ * @author MacGyvers
  *
  */
 public class TaskManagerGroup extends ReceiverAdapter{
@@ -51,7 +51,44 @@ public class TaskManagerGroup extends ReceiverAdapter{
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Sends a request to synch with other servers in the group
+	 */
+	private void synch(){		
+		send("synch", "");		
+	}
 
+	/**
+	 * Sends a message to all servers via the group
+	 * @param command
+	 * @param xml
+	 */
+	public void send(String command, String xml){
+
+		Message msg = new Message(null, null, xml);
+
+		/*
+		 * Flags:
+		 * add = 0
+		 * update = 1
+		 * delete = 2
+		 * synch = 3 	
+		 */
+		if (command.equalsIgnoreCase("add")) msg.setFlag(new Short("0"));
+		else if (command.equalsIgnoreCase("update")) msg.setFlag(new Short("1"));
+		else if (command.equalsIgnoreCase("delete")) msg.setFlag(new Short("2"));
+		else if (command.equalsIgnoreCase("synch")) msg.setFlag(new Short("3"));
+
+		else throw new IllegalArgumentException();		
+
+		try {
+			channel.send(msg);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * Receives updates to the TaskManager from the other task managers via the group
 	 */
@@ -85,7 +122,7 @@ public class TaskManagerGroup extends ReceiverAdapter{
 			// if command is "synch"
 			else if (command == 3)
 			{
-				sendCal();
+				sendAllTasks();
 			}
 
 			else {
@@ -97,37 +134,7 @@ public class TaskManagerGroup extends ReceiverAdapter{
 		}
 	}
 
-	/**
-	 * 
-	 * @param command
-	 * @param xml
-	 */
-	public void send(String command, String xml){
-
-		Message msg = new Message(null, null, xml);
-
-		/*
-		 * Flags:
-		 * add = 0
-		 * update = 1
-		 * delete = 2
-		 * synch = 3 	get all tasks from the groups servers, called when a server joins the group
-		 */
-		if (command.equalsIgnoreCase("add")) msg.setFlag(new Short("0"));
-		else if (command.equalsIgnoreCase("update")) msg.setFlag(new Short("1"));
-		else if (command.equalsIgnoreCase("delete")) msg.setFlag(new Short("2"));
-		else if (command.equalsIgnoreCase("synch")) msg.setFlag(new Short("3"));
-
-		else throw new IllegalArgumentException();		
-
-		try {
-			channel.send(msg);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void sendCal()
+	private void sendAllTasks()
 	{
 		try {
 			ArrayList<Task> tasks = cal.tasks;
@@ -157,11 +164,8 @@ public class TaskManagerGroup extends ReceiverAdapter{
 	}
 
 	/**
-	 * Sends a request to synch with other servers in the group
+	 * Closes channel.
 	 */
-	private void synch(){		
-		send("synch", "");		
-	}
 	public void closeChannel(){
 		channel.close();
 	}

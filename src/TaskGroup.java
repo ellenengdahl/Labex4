@@ -9,11 +9,16 @@ import org.jgroups.ReceiverAdapter;
 import org.jgroups.View;
 import org.jgroups.util.Util;
 
+import xml.Cal;
+import xml.CalSerializer;
+
 public class TaskGroup extends ReceiverAdapter {
 
 	JChannel channel;
     String user_name=System.getProperty("user.name", "n/a");
     final List<String> state=new LinkedList<String>();
+    Cal cal;
+    CalSerializer cs;
 
     private void start() throws Exception {
         channel=new JChannel();

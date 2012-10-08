@@ -41,6 +41,7 @@ public class CalSerializer {
 		return cal;
 	}
 	
+	
 	public String serialize(Cal cal) throws JAXBException, IOException {
 		String returningString = "";
 

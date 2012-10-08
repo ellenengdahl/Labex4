@@ -28,8 +28,8 @@ public class TaskManagerGroup extends ReceiverAdapter{
 	public TaskManagerGroup() {
 
 		try {
-			CalSerializer cs = new CalSerializer();
-			Cal cal = cs.deserialize();
+			cs = new CalSerializer();
+			cal = cs.deserialize();
 
 			// initialize a JChannel
 			channel = new JChannel();

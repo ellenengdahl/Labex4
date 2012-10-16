@@ -5,6 +5,7 @@ package xml;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,7 +34,7 @@ public class CalSerializer {
 
 
         // Iterate through the collection of student object and print each student object in the form of Xml to console.
-        ListIterator<Task> taskIterator = cal.tasks.listIterator();
+        Iterator<Task> taskIterator = cal.tasks.iterator();
 
         ListIterator<User> userIterator = cal.users.listIterator();
 

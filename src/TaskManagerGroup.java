@@ -1,6 +1,8 @@
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 
 import javax.xml.bind.JAXBException;
 
@@ -22,15 +24,18 @@ public class TaskManagerGroup extends ReceiverAdapter{
 
 	private Cal cal;
 	private CalSerializer cs;
+	private HashMap<String, Task> calMap;
 	private JChannel channel;
 	private final static String GROUPNAME = "TaskManager";
 
 	public TaskManagerGroup() {
-
+			
 		try {
 			cs = new CalSerializer();
 			cal = cs.deserialize();
-
+			calMap = new HashMap<String, Task>();
+			for(Task task : cal.tasks)
+				calMap.put(task.id, task);
 			// initialize a JChannel
 			channel = new JChannel();
 			channel.setReceiver(this);
@@ -137,7 +142,7 @@ public class TaskManagerGroup extends ReceiverAdapter{
 	private void sendAllTasks()
 	{
 		try {
-			ArrayList<Task> tasks = cal.tasks;
+			Collection<Task> tasks = calMap.values();
 			for (Task t : tasks){
 				String taskXml = TaskSerializer.serialize(t);
 				send("add", taskXml);	
@@ -152,15 +157,40 @@ public class TaskManagerGroup extends ReceiverAdapter{
 	}
 
 	private void addTask(Task task){
+		if(calMap.containsKey(task.id)){
+			updateTask(task);
+			saveTasks();
+		}
+		else calMap.put(task.id, task);
 		System.out.println("added: " + task.id +" | "+ task.name +" | "+ task.date +" | "+ task.status);
+		
 	}
-
+	
+	
 	private void updateTask(Task task){
-		System.out.println("update: " + task.id +" | "+ task.name +" | "+ task.date +" | "+ task.status);
+		if(calMap.containsKey(task.id)){
+			calMap.put(task.id, task);
+			saveTasks();
+			System.out.println("update: " + task.id +" | "+ task.name +" | "+ task.date +" | "+ task.status);
+		} else {
+			System.out.println("Cannot update task if the task doesn't exist.");
+		}
+		
 	}
 
 	private void deleteTask(Task task){
-		System.out.println("delete: " + task.id +" | "+ task.name +" | "+ task.date +" | "+ task.status);
+		if(calMap.containsKey(task.id)){
+			calMap.remove(task.id);
+			saveTasks();
+			System.out.println("delete: " + task.id +" | "+ task.name +" | "+ task.date +" | "+ task.status);
+		} else {
+			System.out.println("Cannot delete task if the task doesn't exist.");
+		}
+		
+	}
+	// saves the hashMap values to the Cal object that can be serialized.
+	private void saveTasks(){
+		cal.tasks = calMap.values();
 	}
 
 	/**
@@ -194,5 +224,7 @@ public class TaskManagerGroup extends ReceiverAdapter{
 
 		tmg.closeChannel();
 	}
+	
+	
 
 }

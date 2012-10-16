@@ -15,7 +15,7 @@ public class Cal implements Serializable {
 	
 	@XmlElementWrapper(name = "tasks")
 	@XmlElement(name = "task")
-	public ArrayList<Task> tasks;
+	public Collection<Task> tasks;
 	
 	
 	@XmlElementWrapper(name = "users")

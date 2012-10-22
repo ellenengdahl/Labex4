@@ -66,44 +66,6 @@ public class CalSerializer {
 	}
 	
 
-//    public static void main(String args[]) throws IOException, FileNotFoundException, JAXBException{
-//    	
-//    	Cal cal = new Cal();
-//    	cal.tasks = new ArrayList<Task>();
-//    	cal.users = new ArrayList<User>();
-//    	
-//    	Task task = new Task();
-//    	task.id = "id-somehting";
-//    	task.name = "name-somehting";
-//    	task.date = "date-somehting";
-//    	task.status = "status-somehting";
-//    	task.attendants = new ArrayList<String>();
-//    	task.attendants.add("Attendant1");
-//    	task.attendants.add("Attendant2");
-//    	task.attendants.add("Attendant3");
-//    	cal.tasks.add(task);
-//    	
-//    	User user = new User();
-//    	user.name = "name of user";
-//    	user.password = "Undercover Brother";
-//    	cal.users.add(user);
-//    	
-//    	CalSerializer calSer = new CalSerializer();
-//    	System.out.println(calSer.serialize(cal));
-//    	
-//    	System.out.println("Tasks in Cal: " + cal.tasks.size());
-//    	System.out.println("Users in Cal: " + cal.users.size());
-//    	
-//    	
-//    	
-//    	Cal calClone = calSer.deserialize();
-//    	
-//    	if(calClone != null) System.out.println(calClone);
-//    	
-//    	System.out.println(calSer.serialize(calClone));
-//    	
-//    }
-
     public static void PrintTaskObject(Task task){
 
         try {
@@ -123,6 +85,7 @@ public class CalSerializer {
         }
 
     }
+
     public static void PrintUserObject(User user){
 
         try {

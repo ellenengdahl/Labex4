@@ -191,6 +191,15 @@ public class TaskManagerGroup extends ReceiverAdapter{
 	// saves the hashMap values to the Cal object that can be serialized.
 	private void saveTasks(){
 		cal.tasks = calMap.values();
+		try {
+			cs.serialize(cal);
+		} catch (JAXBException e) {
+			// Handle errors here, skipped for this exercise :-)
+			e.printStackTrace();
+		} catch (IOException e) {
+			// Handle errors here, skipped for this exercise :-)
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -220,7 +229,7 @@ public class TaskManagerGroup extends ReceiverAdapter{
 		tmg.send("update", taskxml2);
 
 		// test delete
-		tmg.send("delete", taskxml);
+	//	tmg.send("delete", taskxml);
 
 		tmg.closeChannel();
 	}

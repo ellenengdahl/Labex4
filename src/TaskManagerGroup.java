@@ -229,7 +229,7 @@ public class TaskManagerGroup extends ReceiverAdapter{
 		tmg.send("update", taskxml2);
 
 		// test delete
-	//	tmg.send("delete", taskxml);
+		tmg.send("delete", taskxml);
 
 		tmg.closeChannel();
 	}

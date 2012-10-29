@@ -26,7 +26,7 @@ public class TaskManagerGroup extends ReceiverAdapter{
 	private CalSerializer cs;
 	private HashMap<String, Task> calMap;
 	private JChannel channel;
-	private final static String GROUPNAME = "TaskManager";
+	private final static String GROUPNAME = "TaskManager"; 
 
 	public TaskManagerGroup() {
 			
@@ -97,6 +97,7 @@ public class TaskManagerGroup extends ReceiverAdapter{
 	/**
 	 * Receives updates to the TaskManager from the other task managers via the group
 	 */
+	@Override
 	public void receive(Message msg){
 		try {
 			//retrieve the command
@@ -105,7 +106,9 @@ public class TaskManagerGroup extends ReceiverAdapter{
 			//retrieve the task
 			String xml = (String) msg.getObject();
 			Task task = TaskSerializer.deserializeTask(xml);
-
+			
+			printTask(task, command);
+			
 			// if command is "add" (or put)
 			if (command == 0)
 			{
@@ -162,7 +165,7 @@ public class TaskManagerGroup extends ReceiverAdapter{
 			saveTasks();
 		}
 		else calMap.put(task.id, task);
-		System.out.println("added: " + task.id +" | "+ task.name +" | "+ task.date +" | "+ task.status);
+//		System.out.println("added: " + task.id +" | "+ task.name +" | "+ task.date +" | "+ task.status);
 		
 	}
 	
@@ -171,7 +174,7 @@ public class TaskManagerGroup extends ReceiverAdapter{
 		if(calMap.containsKey(task.id)){
 			calMap.put(task.id, task);
 			saveTasks();
-			System.out.println("update: " + task.id +" | "+ task.name +" | "+ task.date +" | "+ task.status);
+//			System.out.println("update: " + task.id +" | "+ task.name +" | "+ task.date +" | "+ task.status);
 		} else {
 			System.out.println("Cannot update task if the task doesn't exist.");
 		}
@@ -182,7 +185,7 @@ public class TaskManagerGroup extends ReceiverAdapter{
 		if(calMap.containsKey(task.id)){
 			calMap.remove(task.id);
 			saveTasks();
-			System.out.println("delete: " + task.id +" | "+ task.name +" | "+ task.date +" | "+ task.status);
+//			System.out.println("delete: " + task.id +" | "+ task.name +" | "+ task.date +" | "+ task.status);
 		} else {
 			System.out.println("Cannot delete task if the task doesn't exist.");
 		}
@@ -200,6 +203,29 @@ public class TaskManagerGroup extends ReceiverAdapter{
 			// Handle errors here, skipped for this exercise :-)
 			e.printStackTrace();
 		}
+	}
+	
+	private void printTask(Task task, short command){
+		
+		switch (command){
+		case 0:
+			System.out.println("Task added: ");
+			System.out.println(task);
+			break;
+		case 1:
+			System.out.println("Task updated: ");
+			System.out.println(task);
+			break;
+		case 2:
+			System.out.println("Task deleted: ");
+			System.out.println(task);
+			break;
+		case 3:
+			System.out.println("All tasks has been requested from another client.");
+			break;
+		}
+		
+		
 	}
 
 	/**
@@ -231,7 +257,7 @@ public class TaskManagerGroup extends ReceiverAdapter{
 		// test delete
 		tmg.send("delete", taskxml);
 
-		tmg.closeChannel();
+	//	tmg.closeChannel();
 	}
 	
 	

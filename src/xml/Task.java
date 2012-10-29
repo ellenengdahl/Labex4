@@ -39,5 +39,20 @@ public class Task implements Serializable {
         this.date = date;
         this.status = status;
     }
+    
+    @Override
+    public String toString(){
+    	String s = "";
+    	s += "Id: " + id;
+    	s += "\nName: " + name;
+    	s += "\nDate: " + date;
+    	s += "\nStatus: " + status;
+    	
+    	for(String temp : attendants){
+    		s += "\nAttendant: " + temp;
+    	}
+    	
+    	return s;
+    }
 
 }

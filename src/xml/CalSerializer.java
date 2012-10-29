@@ -3,8 +3,10 @@
  */
 package xml;
 
+import java.awt.List;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.logging.Level;
@@ -17,16 +19,26 @@ import javax.xml.bind.JAXBException;
  *
  */
 public class CalSerializer {
-	private final String SAVING_PATH = "task-manager-xml.xml";
-
-	public Cal deserialize() throws JAXBException, FileNotFoundException {
+	
+	public Cal deserialize(String path) throws JAXBException, IOException {
 		Cal cal = null;
 
         // create an instance context class, to serialize/deserialize.
         JAXBContext jaxbContext = JAXBContext.newInstance(Cal.class);
 
         //Create a file input stream for the university Xml.
-        FileInputStream stream = new FileInputStream(SAVING_PATH);
+        FileInputStream stream;
+        try{
+        	stream = new FileInputStream(path);
+        } catch (FileNotFoundException fnfe){
+        	Cal c = new Cal();
+        	c.tasks = new ArrayList<Task>();
+        	c.users = new ArrayList<User>();
+        	
+        	serialize(c, path);
+        	stream = new FileInputStream(path);
+        	
+        }
 
         // deserialize university xml into java objects.
         cal = (Cal) jaxbContext.createUnmarshaller().unmarshal(stream);
@@ -43,7 +55,7 @@ public class CalSerializer {
 	}
 	
 	
-	public String serialize(Cal cal) throws JAXBException, IOException {
+	public String serialize(Cal cal, String path) throws JAXBException, IOException {
 		String returningString = "";
 
         // create an instance context class, to serialize/deserialize.
@@ -57,7 +69,7 @@ public class CalSerializer {
         jaxbContext.createMarshaller().marshal(cal, writer);
 
 
-        SaveFile(writer.toString(), SAVING_PATH);
+        SaveFile(writer.toString(), path);
 
         returningString = writer.toString();
             
@@ -108,8 +120,6 @@ public class CalSerializer {
     }
 
     private static void SaveFile(String xml, String path) throws IOException {
-
-
         File file = new File(path);
 
         // create a bufferedwriter to write Xml

@@ -52,7 +52,7 @@ public class Task implements Serializable {
     		s += "\nAttendant: " + temp;
     	}
     	
-    	return s;
+    	return s + "\n";
     }
 
 }

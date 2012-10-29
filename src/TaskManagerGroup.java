@@ -1,19 +1,19 @@
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Scanner;
 
 import javax.xml.bind.JAXBException;
+
+import org.jgroups.JChannel;
+import org.jgroups.Message;
+import org.jgroups.ReceiverAdapter;
 
 import xml.Cal;
 import xml.CalSerializer;
 import xml.Task;
 import xml.TaskSerializer;
-
-import org.jgroups.JChannel;
-import org.jgroups.Message;
-import org.jgroups.ReceiverAdapter;
 
 /**
  * This class is a combined server and JGroup rolled into one. The test client is in the main method
@@ -27,12 +27,13 @@ public class TaskManagerGroup extends ReceiverAdapter{
 	private HashMap<String, Task> calMap;
 	private JChannel channel;
 	private final static String GROUPNAME = "TaskManager"; 
+	private String xmlPathName;
 
-	public TaskManagerGroup() {
-			
+	public TaskManagerGroup(String path) {
+		xmlPathName = path;
 		try {
 			cs = new CalSerializer();
-			cal = cs.deserialize();
+			cal = cs.deserialize(xmlPathName);
 			calMap = new HashMap<String, Task>();
 			for(Task task : cal.tasks)
 				calMap.put(task.id, task);
@@ -195,7 +196,7 @@ public class TaskManagerGroup extends ReceiverAdapter{
 	private void saveTasks(){
 		cal.tasks = calMap.values();
 		try {
-			cs.serialize(cal);
+			cs.serialize(cal,xmlPathName);
 		} catch (JAXBException e) {
 			// Handle errors here, skipped for this exercise :-)
 			e.printStackTrace();
@@ -240,24 +241,38 @@ public class TaskManagerGroup extends ReceiverAdapter{
 	 * @throws Exception 
 	 */
 	public static void main(String[] args) throws Exception {
-
-		TaskManagerGroup tmg = new TaskManagerGroup();
-
+		Scanner scanner = new Scanner(System.in);
+		
+		System.out.println("Type client number: ");
+		String clientNr = scanner.next();
+		
+		
+		System.out.println("Client #" + clientNr);
+		
+		
+		String path = "task-manager-xml";
+		String fileType = ".xml";
+		
+		TaskManagerGroup tmg = new TaskManagerGroup(path + clientNr + fileType);
+		
+		
 		Task task = new Task("1", "Make JGroup", "08-10-12", "not executed");
 		String taskxml = TaskSerializer.serialize(task);
 
 		// test add
 		tmg.send("add", taskxml);
 
-		// test update
-		task.status = "executed";
-		String taskxml2 = TaskSerializer.serialize(task);
-		tmg.send("update", taskxml2);
+//		// test update
+//		task.status = "executed";
+//		String taskxml2 = TaskSerializer.serialize(task);
+//		tmg1.send("update", taskxml2);
+//
+//		// test delete
+//		tmg1.send("delete", taskxml);
 
-		// test delete
-		tmg.send("delete", taskxml);
-
-	//	tmg.closeChannel();
+		System.in.read();
+		System.out.println("Client shut down...");
+		tmg.closeChannel();
 	}
 	
 	
